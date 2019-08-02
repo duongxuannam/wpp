@@ -4,7 +4,6 @@ import {
   View,
   StatusBar,
 } from 'react-native';
-import FlashMessage from 'react-native-flash-message';
 
 import AppNavigation from '../../navigation/AppNavigation';
 import NavigationService from '../../navigation/NavigationService';
@@ -46,6 +45,7 @@ class RootContainer extends Component {
   render() {
     return (
       <View flex={1}>
+
         <StatusBar backgroundColor='#6D77A7' barStyle="dark-content" />
         <View flex={1}>
           <AppNavigation
@@ -56,13 +56,7 @@ class RootContainer extends Component {
         </View>
 
         <Indicator />
-        <FlashMessage
-          position="top"
-          icon={{
-            icon: 'warning',
-            position: 'left',
-          }}
-        />
+
         {/* <NoInternet ishow={!isConnected} /> */}
       </View>
 

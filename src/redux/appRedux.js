@@ -56,7 +56,7 @@ const showError = (state, { errorMessage }) => {
     description: errorMessage,
     type: 'danger',
   });
-  return state.merge({});
+  return state;
 };
 
 // Handle show Success
@@ -66,7 +66,7 @@ const showSuccess = (state, { message }) => {
     description: message,
     type: 'success',
   });
-  return state.merge({});
+  return state;
 };
 
 /* ------------- Hookup Reducers To Types ------------- */

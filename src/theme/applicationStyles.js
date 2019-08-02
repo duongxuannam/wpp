@@ -13,7 +13,7 @@ const ApplicationStyles = {
     },
   },
   headerStyle: {
-    height: 60,
+    // height: normalizeHeight(60),
     shadowColor: 'rgba(94,116,160,0.2)',
     shadowOffset: {
       width: 0,

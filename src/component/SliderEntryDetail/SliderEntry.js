@@ -35,16 +35,11 @@ export default class SliderEntry extends Component {
   }
 
   render() {
-    const { data: { title } } = this.props;
-
-
-
     return (
       <TouchableOpacity
         activeOpacity={1}
         style={styles.slideInnerContainer}
-        // eslint-disable-next-line no-undef
-        onPress={() => { alert(`You've clicked '${title}'`); }}
+      // eslint-disable-next-line no-undef
       >
         <View style={styles.shadow} />
         <View style={[styles.imageContainer]}>

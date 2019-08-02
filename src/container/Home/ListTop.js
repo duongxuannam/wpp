@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import PropTypes from 'prop-types';
+import { get } from 'lodash';
 
 import { isIOS, normalize } from '../../util/common';
 
@@ -22,36 +23,7 @@ const itemHorizontalMargin = wp(2);
 export const sliderWidth = viewportWidth;
 export const itemWidth = slideWidth + itemHorizontalMargin * 2;
 
-const ENTRIES2 = [{
-  title: 'Favourites landscapes 1',
-  subtitle: 'Lorem ipsum dolor sit amet',
-  illustration: 'https://i.imgur.com/SsJmZ9jl.jpg',
-},
-{
-  title: 'Favourites landscapes 2',
-  subtitle: 'Lorem ipsum dolor sit amet et nuncat mergitur',
-  illustration: 'https://i.imgur.com/5tj6S7Ol.jpg',
-},
-{
-  title: 'Favourites landscapes 3',
-  subtitle: 'Lorem ipsum dolor sit amet et nuncat',
-  illustration: 'https://i.imgur.com/pmSqIFZl.jpg',
-},
-{
-  title: 'Favourites landscapes 4',
-  subtitle: 'Lorem ipsum dolor sit amet et nuncat mergitur',
-  illustration: 'https://i.imgur.com/cA8zoGel.jpg',
-},
-{
-  title: 'Favourites landscapes 5',
-  subtitle: 'Lorem ipsum dolor sit amet',
-  illustration: 'https://i.imgur.com/pewusMzl.jpg',
-},
-{
-  title: 'Favourites landscapes 6',
-  subtitle: 'Lorem ipsum dolor sit amet et nuncat',
-  illustration: 'https://i.imgur.com/l49aYS3l.jpg',
-}];
+
 
 
 class SliderEntry extends Component {
@@ -65,11 +37,11 @@ class SliderEntry extends Component {
   };
 
   get image() {
-    const { data: { illustration } } = this.props;
-
+    // const { data: { illustration } } = this.props;
+    const uri = get(this, ['props', 'data', 'thumb_img_url']);
     return (
       <Image
-        source={{ uri: illustration }}
+        source={{ uri }}
         style={{
           ...StyleSheet.absoluteFillObject,
           resizeMode: 'cover',
@@ -79,7 +51,7 @@ class SliderEntry extends Component {
   }
 
   render() {
-    const { data: { title } } = this.props;
+    const title = get(this, ['props', 'data', 'name']);
     return (
       <TouchableOpacity
         activeOpacity={1}
@@ -142,26 +114,36 @@ class SliderEntry extends Component {
 
 class ListTop extends Component {
 
-
+  static propTypes = {
+    news: PropTypes.array,
+  };
 
   _renderItem = ({ item, index }) => {
     return <SliderEntry
       index={index}
       snapToNext={() => {
-        console.log(index, this._carousel.snapToItem);
-        this._carousel.snapToItem(index + 1);
+        console.log(index, this._carousel.snapToNext);
+        // this._carousel.snapToItem(index);
+        setTimeout(() => this._carousel.snapToItem(index), 250);
+
       }}
       data={item} even={(index + 1) % 2 === 0} />;
   }
 
 
-
   render() {
+    const { news } = this.props;
     return (
-
-      <View style={{ backgroundColor: '#6D77A7', paddingVertical: 10 }}>
+      <View style={{ backgroundColor: '#6D77A7' }}>
         <Carousel
-          data={ENTRIES2}
+          data={news}
+          // onEndReachedThreshold={0.2} // Tried 0, 0.01, 0.1, 0.7, 50, 100, 700
+
+          // onEndReached={({ distanceFromEnd }) => { // problem
+          //   console.log(distanceFromEnd); // 607, 878 
+          //   console.log('reached'); // once, and if I scroll about 14% of the screen, 
+
+          // }}
           ref={(c) => { this._carousel = c; }}
           renderItem={this._renderItem}
           sliderWidth={sliderWidth}
@@ -169,13 +151,14 @@ class ListTop extends Component {
           inactiveSlideScale={0.95}
           inactiveSlideOpacity={1}
           enableMomentum={true}
-          loop={true}
-          //   activeSlideAlignment={'start'}
+          firstItem={2}
+          // loop={true}
+          // activeSlideAlignment={'start'}
           containerCustomStyle={{
             // marginTop: 15,
             overflow: 'visible',
           }}
-          contentContainerCustomStyle={{ paddingVertical: 10 }}
+          // contentContainerCustomStyle={{ paddingVertical: 10 }}
           activeAnimationType={'spring'}
           activeAnimationOptions={{
             friction: 4,

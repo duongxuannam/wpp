@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* wppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* wppTests.m */; };
 		03CBEBE304604E248210DDA9 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F492AE516BBA44D2B71C0A3C /* Foundation.ttf */; };

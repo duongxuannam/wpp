@@ -7,6 +7,5 @@ YellowBox.ignoreWarnings(['Require cycle:']);
 export default {
   // font scaling override - RN default is on
   allowTextFontScaling: true,
-  baseURL: __DEV__ ? 'https://api-staging.weva.vn' : 'https://api.weva.vn',
-  //baseURL: __DEV__ ? 'http://localhost:3000/' : 'https://b594d858.ngrok.io',
+  baseURL: __DEV__ ? 'http://149.28.229.28/api/wallpapers' : 'http://149.28.229.28/api/wallpapers',
 };

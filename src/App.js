@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
+import FlashMessage from 'react-native-flash-message';
 
 import './config';
 import DebugConfig from './config/DebugConfig';
@@ -22,6 +23,14 @@ class App extends Component {
     return (
       <Provider store={store}>
         <RootContainer />
+        <FlashMessage
+          position="top"
+          //hideStatusBar
+          icon={{
+            icon: 'warning',
+            position: 'left',
+          }}
+        />
       </Provider>
     );
   }

@@ -25,3 +25,16 @@ export const normalizeHeight = (size) => {
 };
 
 export const isIOS = Platform.OS === 'ios';
+
+export const randomName = () => Math.random().toString(36).substring(2) + (new Date()).getTime().toString();
+
+
+export const convertJSON = (input) => {
+  if (typeof input === 'object') return input;
+  if (isIOS) {
+    // input = input.replace(/^\s+|\s+$/g, '');
+
+    return JSON.parse(input.replace(/^\s+|\s+$/g, ''));
+  }
+  return JSON.parse(input.replace(/^\s+|\s+$/g, ''));
+};

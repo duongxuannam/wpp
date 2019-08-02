@@ -11,45 +11,12 @@ import PropTypes from 'prop-types';
 
 import { ratioScreen, normalize } from '../../util/common';
 
-
-const ENTRIES2 = [{
-  title: 'Favourites landscapes 1',
-  subtitle: 'Lorem ipsum dolor sit amet',
-  illustration: 'https://i.imgur.com/SsJmZ9jl.jpg',
-},
-{
-  title: 'Favourites landscapes 2',
-  subtitle: 'Lorem ipsum dolor sit amet et nuncat mergitur',
-  illustration: 'https://i.imgur.com/5tj6S7Ol.jpg',
-},
-{
-  title: 'Favourites landscapes 3',
-  subtitle: 'Lorem ipsum dolor sit amet et nuncat',
-  illustration: 'https://i.imgur.com/pmSqIFZl.jpg',
-},
-{
-  title: 'Favourites landscapes 4',
-  subtitle: 'Lorem ipsum dolor sit amet et nuncat mergitur',
-  illustration: 'https://i.imgur.com/cA8zoGel.jpg',
-},
-{
-  title: 'Favourites landscapes 5',
-  subtitle: 'Lorem ipsum dolor sit amet',
-  illustration: 'https://i.imgur.com/pewusMzl.jpg',
-},
-{
-  title: 'Favourites landscapes 6',
-  subtitle: 'Lorem ipsum dolor sit amet et nuncat',
-  illustration: 'https://i.imgur.com/l49aYS3l.jpg',
-}];
-
-
-
 class ListBottom extends Component {
 
 
   static propTypes = {
     navigation: PropTypes.object,
+    topDownload: PropTypes.array,
   };
 
   _renderItem = ({ item, index }) => {
@@ -63,7 +30,7 @@ class ListBottom extends Component {
         }}
         key={index}>
         <Image
-          source={{ uri: item.illustration }}
+          source={{ uri: item.thumb_img_url }}
           style={{
             ...StyleSheet.absoluteFillObject,
             resizeMode: 'cover',
@@ -80,7 +47,7 @@ class ListBottom extends Component {
             fontSize: normalize(14),
             textAlign: 'center',
           }}>
-            Name album
+            {item.name}
           </Text>
           <Text
             style={{
@@ -89,7 +56,7 @@ class ListBottom extends Component {
               textAlign: 'center',
             }}
           >
-            Download 125.5k
+            Download {item.downloads}
           </Text>
         </View>
       </View>
@@ -97,16 +64,13 @@ class ListBottom extends Component {
   }
 
   render() {
+    const { topDownload } = this.props;
     return (
-
       <View style={{}}>
         <Text style={{
           marginTop: 10, fontSize: 15,
           color: 'white', marginLeft: 25,
         }}>Top downloads</Text>
-
-
-
         <FlatList
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -114,7 +78,7 @@ class ListBottom extends Component {
             margin: 20,
           }}
           keyExtractor={(item, index) => index.toString()}
-          data={ENTRIES2}
+          data={topDownload}
           renderItem={this._renderItem}
         />
 

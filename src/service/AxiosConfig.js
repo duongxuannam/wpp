@@ -2,38 +2,39 @@ import axios from 'axios';
 import AppConfig from '../config/AppConfig';
 
 const api = axios.create({
-  baseURL: `${AppConfig.serverURL}`,
+  baseURL: `${AppConfig.baseURL}`,
   timeout: 15000,
 });
 
 api.interceptors.response.use((response) => {
   if (__DEV__) {
-    console.log('res ', response.data);
+    console.log('res ', response);
+    console.log('typeof ', typeof response.data);
   }
   return response.data;
 },
-(error) => {
-  if (__DEV__) {
-    console.log('error ', error);
-  }
-  if (error.response) {
-    // if(__DEV__) {
-    //   console.log('error ', error.response) 
-    // }
-    console.log('error response', error.response);
+  (error) => {
+    if (__DEV__) {
+      // console.log('error ', error);
+    }
+    if (error.response) {
+      // if(__DEV__) {
+      //   console.log('error ', error.response) 
+      // }
+      // console.log('error response', error.response);
 
-    // error.response.data.errors.statusCode = error.response.status
-    return Promise.reject(error.response);
-  } else if (error.request) return Promise.reject({
-    // common: 'No response was received' 
-    data: {
-      message: 'No response was received',
-    },
+      // error.response.data.errors.statusCode = error.response.status
+      return Promise.reject(error.response);
+    } else if (error.request) return Promise.reject({
+      // common: 'No response was received' 
+      data: {
+        message: 'No response was received',
+      },
+    });
+    // console.log('error response', error.message);
+
+    return Promise.reject({ common: error.message });
   });
-  console.log('error response', error.message);
-
-  return Promise.reject({ common: error.message });
-});
 
 api.interceptors.request.use(function (config) {
   // Do something before request is sent

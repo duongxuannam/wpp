@@ -4,18 +4,21 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import PropTypes from 'prop-types';
+
 import { normalize } from '../../util/common';
-
-
-
-
 
 
 class Bottom extends Component {
 
+  static propTypes = {
+    downloadFile: PropTypes.func,
+    nextImage: PropTypes.func,
+  };
 
 
   render() {
+    const { downloadFile, nextImage } = this.props;
     return (
 
       <View style={{
@@ -27,6 +30,7 @@ class Bottom extends Component {
           paddingLeft: normalize(30),
         }}>
           <TouchableOpacity
+            onPress={nextImage}
           >
             <Icon name='md-close' style={[{
               color: 'white',
@@ -43,6 +47,7 @@ class Bottom extends Component {
           alignItems: 'flex-end', paddingRight: normalize(30),
         }}>
           <TouchableOpacity
+            onPress={downloadFile}
           >
             <Icon name='md-checkmark' style={[{
               color: 'white',
@@ -53,7 +58,7 @@ class Bottom extends Component {
             }]} size={35} />
           </TouchableOpacity>
         </View>
-      </View>
+      </View >
 
     );
   }

@@ -1,7 +1,9 @@
-import { createAppContainer, createStackNavigator } from 'react-navigation';
+import React from 'react';
+import { createAppContainer, createStackNavigator, createDrawerNavigator } from 'react-navigation';
 import HomeNavigation from './HomeNavigation';
 import DetailNavigation from './DetailNavigation';
 import SearchNavigation from './SearchNavigation';
+import DrawerMenu from '../container/DrawerMenu';
 
 
 const MainStack = createStackNavigator({
@@ -14,9 +16,22 @@ const MainStack = createStackNavigator({
   headerMode: 'none',
 });
 
+const DrawerNavigator = createDrawerNavigator({ screen: MainStack }, {
+  hideStatusBar: true,
+  drawerBackgroundColor: 'rgba(255,255,255,.9)',
+  overlayColor: '#6b52ae',
+  drawerType: 'slide',
+  contentComponent: <DrawerMenu />,
+  contentOptions: {
+    activeTintColor: '#fff',
+    activeBackgroundColor: '#6b52ae',
+  },
+});
+
+
 const RootStack = createStackNavigator(
   {
-    Main: { screen: MainStack },
+    Main: { screen: DrawerNavigator },
   },
   {
     mode: 'modal',
