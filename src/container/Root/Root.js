@@ -4,16 +4,23 @@ import {
   View,
   StatusBar,
 } from 'react-native';
-
+import SplashScreen from 'react-native-smart-splash-screen';
 import AppNavigation from '../../navigation/AppNavigation';
 import NavigationService from '../../navigation/NavigationService';
 import Indicator from '../../component/Indicator';
+
 // import NoInternet from '../../component/NoInternet';
 
 
 class RootContainer extends Component {
 
   async componentDidMount() {
+
+    SplashScreen.close({
+      animationType: SplashScreen.animationType.scale,
+      duration: 850,
+      delay: 200,
+    });
     try {
       NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
       NetInfo.isConnected.fetch().done(this.handleConnectivityChange);

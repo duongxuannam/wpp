@@ -86,9 +86,9 @@ class Home extends Component {
       device: 'iphone',
       page: 0,
     };
-    getNewsRequest(params);
+    // getNewsRequest(params);
 
-    getTopRequest();
+    // getTopRequest();
 
   }
 
@@ -124,9 +124,9 @@ class Home extends Component {
             <ScrollView
               bounces={false}
               showsVerticalScrollIndicator={false}>
-              {news.length > 0 && <ListTop news={news} />}
+              {/* {news.length > 0 && <ListTop news={news} />} */}
               <ListMid />
-              <ListBottom navigation={navigation} topDownload={topDownload} />
+              {/* <ListBottom navigation={navigation} topDownload={topDownload} /> */}
             </ScrollView>
           </LinearGradient>
         </DrawerLayout>
