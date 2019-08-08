@@ -17,6 +17,7 @@ class ListBottom extends Component {
     navigation: PropTypes.object,
     data: PropTypes.array,
     scrollToImage: PropTypes.func,
+    loadMoreDetails: PropTypes.func,
   };
 
   _renderItem = ({ item, index }) => {
@@ -30,7 +31,7 @@ class ListBottom extends Component {
         }}
         key={index}>
         <Image
-          source={{ uri: item.illustration }}
+          source={{ uri: item.thumb_img_url }}
           style={{
             ...StyleSheet.absoluteFillObject,
             resizeMode: 'cover', margin: 1,
@@ -41,7 +42,7 @@ class ListBottom extends Component {
   }
 
   render() {
-    const { data } = this.props;
+    const { data, loadMoreDetails } = this.props;
     return (
       <View style={{ backgroundColor: '#6D77A7', paddingLeft: 20 }}>
         <FlatList
@@ -54,6 +55,8 @@ class ListBottom extends Component {
           keyExtractor={(item, index) => index.toString()}
           data={data}
           renderItem={this._renderItem}
+          onEndReached={loadMoreDetails}
+          onEndReachedThreshold={0.2}
         />
 
 

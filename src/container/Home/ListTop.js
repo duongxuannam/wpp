@@ -6,7 +6,7 @@ import Carousel from 'react-native-snap-carousel';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 
-import { isIOS, normalize } from '../../util/common';
+import { isIOS, normalize, normalizeHeight } from '../../util/common';
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
@@ -34,17 +34,18 @@ class SliderEntry extends Component {
     parallax: PropTypes.bool,
     parallaxProps: PropTypes.object,
     snapToNext: PropTypes.func,
+    setCategory: PropTypes.func,
   };
 
   get image() {
-    // const { data: { illustration } } = this.props;
-    const uri = get(this, ['props', 'data', 'thumb_img_url']);
+    const uri = get(this, ['props', 'data', 'image']);
     return (
       <Image
         source={{ uri }}
         style={{
           ...StyleSheet.absoluteFillObject,
           resizeMode: 'cover',
+          backgroundColor: '#D0CDCE',
         }}
       />
     );
@@ -52,6 +53,7 @@ class SliderEntry extends Component {
 
   render() {
     const title = get(this, ['props', 'data', 'name']);
+    const { setCategory } = this.props;
     return (
       <TouchableOpacity
         activeOpacity={1}
@@ -62,8 +64,10 @@ class SliderEntry extends Component {
           paddingBottom: 5, // needed for shadow
         }}
         // eslint-disable-next-line no-undef
-        onPress={() => this.props.snapToNext()}
-
+        onPress={() => {
+          this.props.snapToNext();
+          setCategory(title)();
+        }}
       >
         <View style={{
           position: 'absolute',
@@ -95,7 +99,9 @@ class SliderEntry extends Component {
         </View>
         <View style={[{
           justifyContent: 'center',
-          paddingTop: 20 - 8,
+          alignItems: 'center',
+          height: normalizeHeight(30),
+          paddingTop: 8,
           paddingBottom: 10,
           paddingHorizontal: 16,
         }]}>
@@ -115,14 +121,18 @@ class SliderEntry extends Component {
 class ListTop extends Component {
 
   static propTypes = {
-    news: PropTypes.array,
+    categories: PropTypes.array,
+    loadMoreCategoriesRequest: PropTypes.func,
+    setCategory: PropTypes.func,
   };
 
   _renderItem = ({ item, index }) => {
+    const { setCategory } = this.props;
     return <SliderEntry
       index={index}
+      setCategory={setCategory}
       snapToNext={() => {
-        console.log(index, this._carousel.snapToNext);
+        // console.log(index, this._carousel.snapToNext);
         // this._carousel.snapToItem(index);
         setTimeout(() => this._carousel.snapToItem(index), 250);
 
@@ -132,18 +142,18 @@ class ListTop extends Component {
 
 
   render() {
-    const { news } = this.props;
+    const { categories, loadMoreCategoriesRequest } = this.props;
     return (
       <View style={{ backgroundColor: '#6D77A7' }}>
         <Carousel
-          data={news}
-          // onEndReachedThreshold={0.2} // Tried 0, 0.01, 0.1, 0.7, 50, 100, 700
+          data={categories}
+          onEndReachedThreshold={0.2} // Tried 0, 0.01, 0.1, 0.7, 50, 100, 700
 
-          // onEndReached={({ distanceFromEnd }) => { // problem
-          //   console.log(distanceFromEnd); // 607, 878 
-          //   console.log('reached'); // once, and if I scroll about 14% of the screen, 
-
-          // }}
+          onEndReached={() => { // problem
+            // console.log(distanceFromEnd); // 607, 878 
+            // console.log('reached'); // once, and if I scroll about 14% of the screen, 
+            loadMoreCategoriesRequest();
+          }}
           ref={(c) => { this._carousel = c; }}
           renderItem={this._renderItem}
           sliderWidth={sliderWidth}

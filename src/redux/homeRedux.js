@@ -8,6 +8,10 @@ const { Types, Creators } = createActions({
   getNewsSuccess: ['news', 'hasMore'],
   getNewsFailure: ['error'],
 
+  getCategoriesRequest: ['params', 'actionSuccess', 'actionFailure'],
+  getCategoriesSuccess: ['categories', 'hasMore'],
+  getCategoriesFailure: ['error'],
+
   getTopRequest: ['actionSuccess', 'actionFailure'],
   getTopSuccess: ['topDownload', 'hasMore'],
   getTopFailure: ['error'],
@@ -24,7 +28,13 @@ export const INITIAL_STATE = Immutable({
   isNewsRefreshing: false,
   isNewsLoadingMore: false,
   newsHasMore: true,
-  newsPage: 0,
+  newsPage: 1,
+
+  categories: [],
+  isCategoriesRefreshing: false,
+  isCategoriesLoadingMore: false,
+  categoriesHasMore: true,
+  categoriesPage: 1,
 
   topDownload: [],
   isTopDownloadLoading: false,
@@ -33,11 +43,11 @@ export const INITIAL_STATE = Immutable({
 /* ------------- Reducers ------------- */
 export const getNewsRequest = (state, { params }) => {
   const { page } = params;
-  if (page === 0) {
+  if (page === 1) {
     return state.merge({
       ...state,
       isNewsRefreshing: true,
-      newsPage: 0,
+      newsPage: 1,
     });
   }
   else return state.merge({
@@ -79,12 +89,61 @@ export const getNewsFailure = (state, { error }) => {
 };
 
 
+export const getCategoriesRequest = (state, { params }) => {
+  const { page } = params;
+  if (page === 1) {
+    return state.merge({
+      ...state,
+      isCategoriesRefreshing: true,
+      categoriesPage: 1,
+    });
+  }
+  else return state.merge({
+    ...state,
+    isCategoriesLoadingMore: true,
+    categoriesPage: page,
+  });
+};
+
+
+export const getCategoriesSuccess = (state, { categories, hasMore }) => {
+  const { isCategoriesLoadingMore } = state;
+  if (isCategoriesLoadingMore) {
+    let dataHandle = state.categories.concat(categories);
+    return state.merge({
+      ...state,
+      categories: dataHandle,
+      isCategoriesLoadingMore: false,
+      isCategoriesRefreshing: false,
+      categoriesHasMore: hasMore,
+    });
+  }
+  else return state.merge({
+    ...state,
+    categories,
+    isCategoriesLoadingMore: false,
+    isCategoriesRefreshing: false,
+    categoriesHasMore: hasMore,
+  });
+};
+
+export const getCategoriesFailure = (state, { error }) => {
+  return state.merge({
+    ...state,
+    error,
+    isCategoriesLoadingMore: false,
+    isCategoriesRefreshing: false,
+  });
+};
+
+
 export const getTopRequest = (state) => {
   return state.merge({
     ...state,
     isTopDownloadLoading: true,
   });
 };
+
 
 
 export const getTopSuccess = (state, { topDownload }) => {
@@ -110,6 +169,10 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.GET_NEWS_REQUEST]: getNewsRequest,
   [Types.GET_NEWS_SUCCESS]: getNewsSuccess,
   [Types.GET_NEWS_FAILURE]: getNewsFailure,
+
+  [Types.GET_CATEGORIES_REQUEST]: getCategoriesRequest,
+  [Types.GET_CATEGORIES_SUCCESS]: getCategoriesSuccess,
+  [Types.GET_CATEGORIES_FAILURE]: getCategoriesFailure,
 
   [Types.GET_TOP_REQUEST]: getTopRequest,
   [Types.GET_TOP_SUCCESS]: getTopSuccess,

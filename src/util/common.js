@@ -29,12 +29,14 @@ export const isIOS = Platform.OS === 'ios';
 export const randomName = () => Math.random().toString(36).substring(2) + (new Date()).getTime().toString();
 
 
-export const convertJSON = (input) => {
-  if (typeof input === 'object') return input;
-  if (isIOS) {
-    // input = input.replace(/^\s+|\s+$/g, '');
+// export const convertJSON = (input) => {
+//   if (typeof input === 'object') return input;
+//   if (isIOS) {
+//     console.log('3900', input[3959]);
 
-    return JSON.parse(input.replace(/^\s+|\s+$/g, ''));
-  }
-  return JSON.parse(input.replace(/^\s+|\s+$/g, ''));
-};
+//     return JSON.parse(`${input.replace('"t,', '').replace('p:\/', '')}`);
+//     // return JSON.parse(input);
+
+//   }
+//   return JSON.parse(input.replace(/^\s+|\s+$/g, ''));
+// };

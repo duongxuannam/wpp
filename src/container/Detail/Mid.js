@@ -14,6 +14,8 @@ class ListBottom extends Component {
   static propTypes = {
     navigation: PropTypes.object,
     data: PropTypes.array,
+    setIndexImg: PropTypes.func,
+    loadMoreDetails: PropTypes.func,
   };
 
 
@@ -23,7 +25,7 @@ class ListBottom extends Component {
   }
 
   render() {
-    const { data } = this.props;
+    const { data, setIndexImg } = this.props;
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Carousel
@@ -35,6 +37,7 @@ class ListBottom extends Component {
           inactiveSlideScale={0.95}
           inactiveSlideOpacity={1}
           enableMomentum={true}
+          onSnapToItem={(index) => setIndexImg(index)()}
           // activeSlideAlignment={'start'}
           containerCustomStyle={{
             overflow: 'visible', // for custom animations

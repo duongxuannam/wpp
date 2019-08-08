@@ -3,20 +3,23 @@ import {
   View,
   TouchableOpacity,
   PermissionsAndroid, Alert,
+  ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
 import { connect } from 'react-redux';
 import RNFetchBlob from 'rn-fetch-blob';
 import PropTypes from 'prop-types';
+import { get } from 'lodash';
 
 import AppActions from '../../redux/appRedux';
+import DetailActions from '../../redux/detailRedux';
+
 import Header from './Header';
 import Top from './Top';
 import Mid from './Mid';
 import Bottom from './Bottom';
-import { randomName, isIOS } from '../../util/common';
-import { dataDetail } from '../../util/constant';
+import { randomName, isIOS, normalizeHeight } from '../../util/common';
 
 class Detail extends Component {
   static propTypes = {
@@ -24,15 +27,25 @@ class Detail extends Component {
     hideIndicator: PropTypes.func,
     showError: PropTypes.func,
     showSuccess: PropTypes.func,
+    navigation: PropTypes.object,
+
+    getDetailRequest: PropTypes.func,
+    details: PropTypes.array,
+    clearDataDetail: PropTypes.func,
+    detailsPage: PropTypes.number,
+    isDetailsLoadingMore: PropTypes.bool,
+    isDetailsRefreshing: PropTypes.bool,
+    detailsHasMore: PropTypes.bool,
   };
 
 
   static navigationOptions = ({ navigation }) => {
+    const title = get(navigation, ['state', 'params', 'title']);
     return {
       headerTitle: (
         <Header
           navigation={navigation}
-          title='Abstract'
+          title={title ? title : 'New'}
         />
       ),
       headerLeft: (
@@ -69,12 +82,59 @@ class Detail extends Component {
     };
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      indexImage: 0,
+    };
+  }
+
+  componentDidMount() {
+    const params = get(this, ['props', 'navigation', 'state', 'params', 'params']);
+    const { getDetailRequest } = this.props;
+    // const params = {
+    //   func: 'query',
+    //   device: 'iphone',
+    //   page: 1,
+    //   order: 'download',
+    // };
+    getDetailRequest(params);
+  }
+
+  loadMoreDetails = () => {
+    const {
+      detailsPage,
+      detailsHasMore,
+      isDetailsLoadingMore,
+      isDetailsRefreshing,
+      getDetailRequest,
+    } = this.props;
+    const params = get(this, ['props', 'navigation', 'state', 'params', 'params']);
+
+    // const params = {
+    //   func: 'query',
+    //   device: 'iphone',
+    //   page: 1,
+    //   order: 'download',
+    // };
+    params.page = detailsPage + 1;
+    if (!isDetailsLoadingMore && !isDetailsRefreshing && detailsHasMore) {
+      getDetailRequest(params);
+    }
+  }
+
+  componentWillUnmount() {
+    const { clearDataDetail } = this.props;
+    clearDataDetail();
+  }
+
   actualAndroidDownload = () => {
-    const { showIndicator, hideIndicator, showError, showSuccess } = this.props;
-    this.setState({
-      progress: 0,
-      loading: true,
-    });
+    const { indexImage } = this.state;
+    const { showIndicator, hideIndicator, showError, showSuccess, details } = this.props;
+    // this.setState({
+    //   progress: 0,
+    //   loading: true,
+    // });
     showIndicator();
     let dirs = RNFetchBlob.fs.dirs;
     RNFetchBlob.config({
@@ -85,7 +145,7 @@ class Detail extends Component {
     })
       .fetch(
         'GET',
-        'http://149.28.229.28//images_data/10669651.jpg',
+        get(details, [indexImage, 'thumb_img_url']),
         {
           //some headers ..
         }
@@ -100,22 +160,23 @@ class Detail extends Component {
         // console.log('res ', res.path());
         hideIndicator();
         showSuccess('Download success');
-        this.setState({
-          progress: 100,
-          loading: false,
-        });
+        // this.setState({
+        //   progress: 100,
+        //   loading: false,
+        // });
         this.nextImage();
       })
-      .catch(e => {
+      .catch(() => {
         hideIndicator();
         showError('Download failed');
-        console.log('e ', e);
+        // console.log('e ', e);
       })
     ;
   };
 
   actualIosDownload = () => {
-    const { showIndicator, hideIndicator, showError, showSuccess } = this.props;
+    const { indexImage } = this.state;
+    const { showIndicator, hideIndicator, showError, showSuccess, details } = this.props;
     this.setState({
       progress: 0,
       loading: true,
@@ -130,13 +191,14 @@ class Detail extends Component {
     })
       .fetch(
         'GET',
-        'http://149.28.229.28//images_data/10669651.jpg',
+        // 'http://149.28.229.28//images_data/10669651.jpg',
+        get(details, [indexImage, 'thumb_img_url']),
         {
           //some headers ..
         }
       )
       .progress((received, total) => {
-        console.log('progress', received / total);
+        // console.log('progress', received / total);
         this.setState({ progress: received / total });
       })
       // eslint-disable-next-line no-unused-vars
@@ -145,16 +207,16 @@ class Detail extends Component {
         // console.log('res ', res.path());
         hideIndicator();
         showSuccess('Download success');
-        this.setState({
-          progress: 100,
-          loading: false,
-        });
+        // this.setState({
+        //   progress: 100,
+        //   loading: false,
+        // });
         this.nextImage();
       })
-      .catch(e => {
+      .catch(() => {
         hideIndicator();
         showError('Download failed');
-        console.log('e ', e);
+        // console.log('e ', e);
       })
     ;
   };
@@ -184,17 +246,41 @@ class Detail extends Component {
     }
   }
 
+  setIndexImg = (index) => () => {
+    this.setState({
+      indexImage: index,
+    });
+  }
+
+
+
   nextImage = () => {
     this.midComponent._carousel.snapToNext();
+    this.setIndexImg(this.state.indexImage + 1)();
   }
 
   scrollToImage = (index) => () => {
     this.topComponent.flatListRef.scrollToIndex({ animated: true, index: '' + index });
     this.midComponent._carousel.snapToItem(index);
+    this.setIndexImg(index)();
+
   }
 
 
+  renderLoading = () => {
+    return (
+      <View style={{ height: 200, justifyContent: 'center' }}>
+        <ActivityIndicator
+          size='large'
+          color='#6D77A7'
+          style={{ height: normalizeHeight(70) }}
+        />
+      </View>
+    );
+  }
+
   render() {
+    const { details } = this.props;
     return (
       <View flex={1} >
         <LinearGradient
@@ -202,12 +288,21 @@ class Detail extends Component {
           locations={[0, 0.2, 0.3, 0.4]}
           colors={['#DC8DEA', '#C58DE7', '#AB8FE7', '#888DE1']}
           style={{ flex: 1 }}>
-          <Top data={dataDetail}
+          {details.length > 0 ? <Top data={details}
+            loadMoreDetails={this.loadMoreDetails}
             ref={(topComponent) => { this.topComponent = topComponent; }}
-            scrollToImage={this.scrollToImage} />
-          <Mid data={dataDetail}
+            scrollToImage={this.scrollToImage} /> :
+            this.renderLoading()}
+
+          {details.length > 0 ? <Mid
+            loadMoreDetails={this.loadMoreDetails}
+            data={details} setIndexImg={this.setIndexImg}
             ref={(midComponent) => { this.midComponent = midComponent; }}
-          />
+          /> : <View style={{ flex: 1 }}>
+            {this.renderLoading()}
+          </View>
+          }
+
           <Bottom
             downloadFile={this.downloadFile}
             nextImage={this.nextImage} />
@@ -217,12 +312,24 @@ class Detail extends Component {
   }
 }
 
+const mapStateToProps = (state) => ({
+  details: get(state, ['detail', 'details'], []),
+  isDetailsRefreshing: get(state, ['detail', 'isDetailsRefreshing']),
+  isDetailsLoadingMore: get(state, ['detail', 'isDetailsLoadingMore']),
+  detailsHasMore: get(state, ['detail', 'detailsHasMore']),
+  detailsPage: get(state, ['detail', 'detailsPage']),
+});
+
 const mapDispatchToProps = (dispatch) => ({
   showIndicator: () => dispatch(AppActions.showIndicator()),
   hideIndicator: () => dispatch(AppActions.hideIndicator()),
   showError: (mess) => dispatch(AppActions.showError(mess)),
   showSuccess: (mess) => dispatch(AppActions.showSuccess(mess)),
+
+  getDetailRequest: (params, success, error) => dispatch(DetailActions.getDetailRequest(params, success, error)),
+  clearDataDetail: () => dispatch(DetailActions.clearDataDetail()),
+
 });
 
-export default connect(null, mapDispatchToProps)(Detail);
+export default connect(mapStateToProps, mapDispatchToProps)(Detail);
 

@@ -3,54 +3,32 @@ import {
   View,
 } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
+import PropTypes from 'prop-types';
+
 import SliderEntry from '../../component/SliderEntry';
 import { sliderWidth, itemWidth } from '../../component/SliderEntry/styles';
 
-const ENTRIES2 = [{
-  title: 'Favourites landscapes 1',
-  subtitle: 'Lorem ipsum dolor sit amet',
-  illustration: 'https://i.imgur.com/SsJmZ9jl.jpg',
-},
-{
-  title: 'Favourites landscapes 2',
-  subtitle: 'Lorem ipsum dolor sit amet et nuncat mergitur',
-  illustration: 'https://i.imgur.com/5tj6S7Ol.jpg',
-},
-{
-  title: 'Favourites landscapes 3',
-  subtitle: 'Lorem ipsum dolor sit amet et nuncat',
-  illustration: 'https://i.imgur.com/pmSqIFZl.jpg',
-},
-{
-  title: 'Favourites landscapes 4',
-  subtitle: 'Lorem ipsum dolor sit amet et nuncat mergitur',
-  illustration: 'https://i.imgur.com/cA8zoGel.jpg',
-},
-{
-  title: 'Favourites landscapes 5',
-  subtitle: 'Lorem ipsum dolor sit amet',
-  illustration: 'https://i.imgur.com/pewusMzl.jpg',
-},
-{
-  title: 'Favourites landscapes 6',
-  subtitle: 'Lorem ipsum dolor sit amet et nuncat',
-  illustration: 'https://i.imgur.com/l49aYS3l.jpg',
-}];
-
 class ListMid extends Component {
 
+  static propTypes = {
+    news: PropTypes.array,
+    navigation: PropTypes.object,
+    category: PropTypes.any,
+  };
 
-
-  _renderItem({ item, index }) {
-    return <SliderEntry data={item} even={(index + 1) % 2 === 0} />;
+  _renderItem = ({ item, index }) => {
+    const { navigation, category } = this.props;
+    return <SliderEntry
+      category={category}
+      navigation={navigation} data={item} even={(index + 1) % 2 === 0} />;
   }
 
   render() {
+    const { news } = this.props;
     return (
-
       <View style={{ marginTop: 10 }}>
         <Carousel
-          data={ENTRIES2}
+          data={news}
           renderItem={this._renderItem}
           sliderWidth={sliderWidth}
           itemWidth={itemWidth}

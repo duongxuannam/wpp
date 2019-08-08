@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
   View,
-  ScrollView, TouchableOpacity,
+  ScrollView, TouchableOpacity, ActivityIndicator,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -15,7 +15,7 @@ import ListMid from './ListMid';
 import ListTop from './ListTop';
 import ListBottom from './ListBottom';
 import DrawerMenu from '../DrawerMenu';
-import { normalize } from '../../util/common';
+import { normalize, normalizeHeight } from '../../util/common';
 import HomeActions from '../../redux/homeRedux';
 
 class Home extends Component {
@@ -27,6 +27,14 @@ class Home extends Component {
 
     getTopRequest: PropTypes.func,
     topDownload: PropTypes.array,
+    newsHasMore: PropTypes.bool,
+    newsPage: PropTypes.number,
+    isNewsRefreshing: PropTypes.bool,
+
+    getCategoriesRequest: PropTypes.func,
+    categoriesPage: PropTypes.number,
+    categoriesHasMore: PropTypes.bool,
+    categories: PropTypes.array,
   };
 
   static navigationOptions = ({ navigation }) => {
@@ -72,25 +80,68 @@ class Home extends Component {
     };
   }
 
-
+  constructor(props) {
+    super(props);
+    this.state = {
+      category: '',
+    };
+  }
 
   componentDidMount() {
-    const { navigation, getNewsRequest, getTopRequest } = this.props;
+    const { navigation, getNewsRequest, getTopRequest, getCategoriesRequest } = this.props;
     const { setParams } = navigation;
 
     setParams({
       toggleDrawer: this.toggleDrawer,
     });
-    const params = {
+    const paramsNews = {
       func: 'query',
       device: 'iphone',
-      page: 0,
+      page: 1,
     };
-    // getNewsRequest(params);
 
-    // getTopRequest();
+    const paramsCategories = {
+      func: 'category',
+      device: 'iphone',
+      page: 1,
+    };
+
+
+    getCategoriesRequest(paramsCategories);
+
+    getNewsRequest(paramsNews);
+
+    getTopRequest();
 
   }
+
+  loadMoreCategoriesRequest = () => {
+    const { getCategoriesRequest, categoriesHasMore, categoriesPage } = this.props;
+    if (categoriesHasMore) {
+      const params = {
+        func: 'category',
+        device: 'iphone',
+        page: categoriesPage + 1,
+      };
+      getCategoriesRequest(params);
+    }
+  }
+
+  setCategory = (category) => () => {
+    const { getNewsRequest } = this.props;
+    this.setState({
+      category,
+    });
+    const paramsNews = {
+      func: 'query',
+      device: 'iphone',
+      page: 1,
+      category,
+    };
+    getNewsRequest(paramsNews);
+
+  }
+
 
   renderDrawer = () => {
     return <DrawerMenu />;
@@ -100,8 +151,21 @@ class Home extends Component {
     this.drawer.openDrawer();
   }
 
+  renderLoading = () => {
+    return (
+      <View style={{ height: 200, justifyContent: 'center' }}>
+        <ActivityIndicator
+          size='large'
+          color='#6D77A7'
+          style={{ height: normalizeHeight(70) }}
+        />
+      </View>
+    );
+  }
+
   render() {
-    const { navigation, news, topDownload } = this.props;
+    const { navigation, news, topDownload, categories, isNewsRefreshing } = this.props;
+    const { category } = this.state;
     return (
       <View flex={1}>
         <DrawerLayout
@@ -124,9 +188,23 @@ class Home extends Component {
             <ScrollView
               bounces={false}
               showsVerticalScrollIndicator={false}>
-              {/* {news.length > 0 && <ListTop news={news} />} */}
-              <ListMid />
-              {/* <ListBottom navigation={navigation} topDownload={topDownload} /> */}
+              {categories.length > 0 ?
+                <ListTop
+                  setCategory={this.setCategory}
+                  categories={categories}
+                  loadMoreCategoriesRequest={this.loadMoreCategoriesRequest} />
+                : this.renderLoading()
+              }
+              {(news.length > 0 && !isNewsRefreshing) ?
+                <ListMid navigation={navigation} news={news}
+                  category={category}
+                />
+                : this.renderLoading()
+              }
+              {topDownload.length > 0 ? <ListBottom navigation={navigation} topDownload={topDownload} />
+                : this.renderLoading()
+              }
+
             </ScrollView>
           </LinearGradient>
         </DrawerLayout>
@@ -145,12 +223,19 @@ const mapStateToProps = (state) => ({
   newsHasMore: get(state, ['home', 'newsHasMore']),
   newsPage: get(state, ['home', 'newsPage']),
 
+  categories: get(state, ['home', 'categories'], []),
+  isCategoriesRefreshing: get(state, ['home', 'isCategoriesRefreshing']),
+  isCategoriesLoadingMore: get(state, ['home', 'isCategoriesLoadingMore']),
+  categoriesHasMore: get(state, ['home', 'categoriesHasMore']),
+  categoriesPage: get(state, ['home', 'categoriesPage']),
+
   topDownload: get(state, ['home', 'topDownload'], []),
   isTopDownloadLoading: get(state, ['home', 'isTopDownloadLoading']),
-
 });
+
 const mapDispatchToProps = (dispatch) => ({
   getNewsRequest: (params, success, error) => dispatch(HomeActions.getNewsRequest(params, success, error)),
+  getCategoriesRequest: (params, success, error) => dispatch(HomeActions.getCategoriesRequest(params, success, error)),
   getTopRequest: (success, error) => dispatch(HomeActions.getTopRequest(success, error)),
 });
 

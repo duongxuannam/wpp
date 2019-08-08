@@ -8,11 +8,15 @@ export default class Header extends PureComponent {
 
   static propTypes = {
     navigation: PropTypes.object,
+    changeTextSearch: PropTypes.func,
+    onSearchHandle: PropTypes.func,
+    resetSearch: PropTypes.func,
+    textSearch: PropTypes.string,
   };
 
 
   render() {
-    const { navigation } = this.props;
+    const { navigation, textSearch, changeTextSearch, resetSearch } = this.props;
     return (
       <View style={{
         flex: 1,
@@ -34,12 +38,16 @@ export default class Header extends PureComponent {
               flex: 1,
               paddingHorizontal: normalize(15),
               paddingVertical: normalize(8),
-
             }}
+            onChangeText={changeTextSearch}
+            returnKeyType='search'
+            value={textSearch}
           />
-          <Icon name='md-close-circle' style={[{
-            color: '#DFDDE0',
-          }]} size={25} />
+          <TouchableOpacity onPress={resetSearch}>
+            <Icon name='md-close-circle' style={[{
+              color: '#DFDDE0',
+            }]} size={25} />
+          </TouchableOpacity>
         </View>
         <TouchableOpacity onPress={() => navigation.goBack(null)}>
           <Text

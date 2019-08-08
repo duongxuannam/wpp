@@ -20,8 +20,15 @@ class ListBottom extends Component {
   };
 
   _renderItem = ({ item, index }) => {
+    const params = {
+      func: 'query',
+      device: 'iphone',
+      page: 1,
+      order: 'download',
+    };
+    const title = item.name;
     return <TouchableOpacity
-      onPress={() => this.props.navigation.navigate('DetailNavigation', {})}
+      onPress={() => this.props.navigation.navigate('DetailNavigation', { params, title: 'Top Download' })}
     >
       <View
         style={{
@@ -34,6 +41,7 @@ class ListBottom extends Component {
           style={{
             ...StyleSheet.absoluteFillObject,
             resizeMode: 'cover',
+            backgroundColor: '#D0CDCE',
           }}
         />
         <View style={{
@@ -47,7 +55,7 @@ class ListBottom extends Component {
             fontSize: normalize(14),
             textAlign: 'center',
           }}>
-            {item.name}
+            {title}
           </Text>
           <Text
             style={{

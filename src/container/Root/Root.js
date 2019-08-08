@@ -8,7 +8,6 @@ import SplashScreen from 'react-native-smart-splash-screen';
 import AppNavigation from '../../navigation/AppNavigation';
 import NavigationService from '../../navigation/NavigationService';
 import Indicator from '../../component/Indicator';
-
 // import NoInternet from '../../component/NoInternet';
 
 
@@ -25,11 +24,11 @@ class RootContainer extends Component {
       NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
       NetInfo.isConnected.fetch().done(this.handleConnectivityChange);
     } catch (error) { } //eslint-disable-line
-    // SplashScreen.close({
-    //   animationType: SplashScreen.animationType.scale,
-    //   duration: 850,
-    //   delay: 500,
-    // });
+    SplashScreen.close({
+      animationType: SplashScreen.animationType.scale,
+      duration: 850,
+      delay: 500,
+    });
   }
 
   handleConnectivityChange = isConnected => {

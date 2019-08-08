@@ -3,13 +3,12 @@ import AppConfig from '../config/AppConfig';
 
 const api = axios.create({
   baseURL: `${AppConfig.baseURL}`,
-  timeout: 15000,
+  timeout: 30000,
 });
 
 api.interceptors.response.use((response) => {
   if (__DEV__) {
-    console.log('res ', response);
-    console.log('typeof ', typeof response.data);
+    // console.log('res ', response);
   }
   return response.data;
 },
@@ -39,7 +38,7 @@ api.interceptors.response.use((response) => {
 api.interceptors.request.use(function (config) {
   // Do something before request is sent
   if (__DEV__) {
-    console.log('config ', config);
+    // console.log('config ', config);
   }
   return config;
 }, function (error) {

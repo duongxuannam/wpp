@@ -3,11 +3,11 @@ import { takeLatest, all, call, put } from 'redux-saga/effects';
 import HomeAPI from '../service/HomeApi';
 import HomeActions, { HomeTypes } from '../redux/homeRedux';
 import AppActions from '../redux/appRedux';
-import { convertJSON } from '../util/common';
 
 function* homeSaga() {
   yield all([
     yield takeLatest(HomeTypes.GET_NEWS_REQUEST, getNewsRequest),
+    yield takeLatest(HomeTypes.GET_CATEGORIES_REQUEST, getCategoriesRequest),
     yield takeLatest(HomeTypes.GET_TOP_REQUEST, getTopRequest),
 
   ]);
@@ -16,15 +16,29 @@ function* homeSaga() {
 export function* getNewsRequest(actions) {
   const { params, actionSuccess, actionFailure } = actions;
   try {
-    const res = yield call(HomeAPI.getNews, params);
-    const news = convertJSON(res);
+    const news = yield call(HomeAPI.getNews, params);
     const hasMore = news && news.length !== 0;
     yield put(HomeActions.getNewsSuccess(news, hasMore));
     actionSuccess && actionSuccess(news);
   } catch (error) {
-    console.log(error);
-    yield put(AppActions.showError(error));
+    // console.log(error);
+    yield put(AppActions.showError(error.toString()));
     yield put(HomeActions.getNewsFailure());
+    actionFailure && actionFailure(error);
+  }
+}
+
+export function* getCategoriesRequest(actions) {
+  const { params, actionSuccess, actionFailure } = actions;
+  try {
+    const categories = yield call(HomeAPI.getCategories, params);
+    const hasMore = categories && categories.length !== 0;
+    yield put(HomeActions.getCategoriesSuccess(categories, hasMore));
+    actionSuccess && actionSuccess(categories);
+  } catch (error) {
+    // console.log(error);
+    yield put(AppActions.showError(error.toString()));
+    yield put(HomeActions.getCategoriesFailure());
     actionFailure && actionFailure(error);
   }
 }
@@ -32,12 +46,11 @@ export function* getNewsRequest(actions) {
 export function* getTopRequest(actions) {
   const { actionSuccess, actionFailure } = actions;
   try {
-    const res = yield call(HomeAPI.getTop);
-    const topDownload = convertJSON(res);
+    const topDownload = yield call(HomeAPI.getTop);
     yield put(HomeActions.getTopSuccess(topDownload));
     actionSuccess && actionSuccess(topDownload);
   } catch (error) {
-    yield put(AppActions.showError(error));
+    yield put(AppActions.showError(error.toString()));
     yield put(HomeActions.getTopFailure());
     actionFailure && actionFailure(error);
   }

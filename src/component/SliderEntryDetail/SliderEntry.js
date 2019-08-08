@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { View, Image, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
 import { ParallaxImage } from 'react-native-snap-carousel';
+import { get } from 'lodash';
+
 import styles from './styles';
 
 export default class SliderEntry extends Component {
@@ -14,11 +16,12 @@ export default class SliderEntry extends Component {
   };
 
   get image() {
-    const { data: { illustration }, parallax, parallaxProps, even } = this.props;
+    const { parallax, parallaxProps, even } = this.props;
+    const uri = get(this, ['props', 'data', 'thumb_img_url']);
 
     return parallax ? (
       <ParallaxImage
-        source={{ uri: illustration }}
+        source={{ uri }}
         containerStyle={[styles.imageContainer, even ? styles.imageContainerEven : {}]}
         style={styles.image}
         parallaxFactor={0.35}
@@ -28,7 +31,7 @@ export default class SliderEntry extends Component {
       />
     ) : (
       <Image
-        source={{ uri: illustration }}
+        source={{ uri }}
         style={[styles.image, { margin: 1 }]}
       />
     );

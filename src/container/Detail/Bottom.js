@@ -20,45 +20,46 @@ class Bottom extends Component {
   render() {
     const { downloadFile, nextImage } = this.props;
     return (
-
-      <View style={{
-        backgroundColor: '#6D77A7', flexDirection: 'row',
-      }}>
+      <View style={{ justifyContent: 'flex-end' }}>
         <View style={{
-          flex: 1, marginVertical: 15,
-
-          paddingLeft: normalize(30),
+          backgroundColor: '#6D77A7', flexDirection: 'row',
         }}>
-          <TouchableOpacity
-            onPress={nextImage}
-          >
-            <Icon name='md-close' style={[{
-              color: 'white',
-              backgroundColor: 'transparent',
-              paddingHorizontal: 5,
-              marginHorizontal: 8,
-              paddingVertical: 5,
-            }]} size={35} />
-          </TouchableOpacity>
-        </View>
+          <View style={{
+            flex: 1, marginVertical: 15,
 
-        <View style={{
-          flex: 1, marginVertical: 15,
-          alignItems: 'flex-end', paddingRight: normalize(30),
-        }}>
-          <TouchableOpacity
-            onPress={downloadFile}
-          >
-            <Icon name='md-checkmark' style={[{
-              color: 'white',
-              backgroundColor: 'transparent',
-              paddingHorizontal: 5,
-              marginHorizontal: 8,
-              paddingVertical: 5,
-            }]} size={35} />
-          </TouchableOpacity>
-        </View>
-      </View >
+            paddingLeft: normalize(30),
+          }}>
+            <TouchableOpacity
+              onPress={nextImage}
+            >
+              <Icon name='md-close' style={[{
+                color: 'white',
+                backgroundColor: 'transparent',
+                paddingHorizontal: 5,
+                marginHorizontal: 8,
+                paddingVertical: 5,
+              }]} size={35} />
+            </TouchableOpacity>
+          </View>
+
+          <View style={{
+            flex: 1, marginVertical: 15,
+            alignItems: 'flex-end', paddingRight: normalize(30),
+          }}>
+            <TouchableOpacity
+              onPress={downloadFile}
+            >
+              <Icon name='md-checkmark' style={[{
+                color: 'white',
+                backgroundColor: 'transparent',
+                paddingHorizontal: 5,
+                marginHorizontal: 8,
+                paddingVertical: 5,
+              }]} size={35} />
+            </TouchableOpacity>
+          </View>
+        </View >
+      </View>
 
     );
   }
