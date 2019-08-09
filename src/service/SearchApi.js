@@ -14,7 +14,7 @@ const getSearch = async (params) => {
     let responseJson = await response.text();
     return JSON.parse(responseJson.replace(/^\s+|\s+$/g, ''));
   } catch (error) {
-    console.error(error);
+    // console.log(error);
   }
 };
 

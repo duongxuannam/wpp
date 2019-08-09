@@ -12,7 +12,7 @@ const { Types, Creators } = createActions({
   getCategoriesSuccess: ['categories', 'hasMore'],
   getCategoriesFailure: ['error'],
 
-  getTopRequest: ['actionSuccess', 'actionFailure'],
+  getTopRequest: ['params', 'actionSuccess', 'actionFailure'],
   getTopSuccess: ['topDownload', 'hasMore'],
   getTopFailure: ['error'],
 
@@ -37,7 +37,10 @@ export const INITIAL_STATE = Immutable({
   categoriesPage: 1,
 
   topDownload: [],
-  isTopDownloadLoading: false,
+  isTopDownloadRefreshing: false,
+  isTopDownloadLoadingMore: false,
+  topDownloadHasMore: true,
+  topDownloadPage: 1,
 });
 
 /* ------------- Reducers ------------- */
@@ -56,7 +59,6 @@ export const getNewsRequest = (state, { params }) => {
     newsPage: page,
   });
 };
-
 
 export const getNewsSuccess = (state, { news, hasMore }) => {
   const { isNewsLoadingMore } = state;
@@ -88,7 +90,6 @@ export const getNewsFailure = (state, { error }) => {
   });
 };
 
-
 export const getCategoriesRequest = (state, { params }) => {
   const { page } = params;
   if (page === 1) {
@@ -104,7 +105,6 @@ export const getCategoriesRequest = (state, { params }) => {
     categoriesPage: page,
   });
 };
-
 
 export const getCategoriesSuccess = (state, { categories, hasMore }) => {
   const { isCategoriesLoadingMore } = state;
@@ -137,20 +137,42 @@ export const getCategoriesFailure = (state, { error }) => {
 };
 
 
-export const getTopRequest = (state) => {
-  return state.merge({
+export const getTopRequest = (state, { params }) => {
+  const { page } = params;
+  if (page === 1) {
+    return state.merge({
+      ...state,
+      isTopDownloadRefreshing: true,
+      topDownloadPage: 1,
+    });
+  }
+  else return state.merge({
     ...state,
-    isTopDownloadLoading: true,
+    isTopDownloadLoadingMore: true,
+    topDownloadPage: page,
   });
 };
 
 
 
-export const getTopSuccess = (state, { topDownload }) => {
-  return state.merge({
+export const getTopSuccess = (state, { topDownload, hasMore }) => {
+  const { isTopDownloadLoadingMore } = state;
+  if (isTopDownloadLoadingMore) {
+    let dataHandle = state.topDownload.concat(topDownload);
+    return state.merge({
+      ...state,
+      topDownload: dataHandle,
+      isTopDownloadLoadingMore: false,
+      isTopDownloadRefreshing: false,
+      topDownloadHasMore: hasMore,
+    });
+  }
+  else return state.merge({
     ...state,
     topDownload,
-    isTopDownloadLoading: false,
+    isTopDownloadLoadingMore: false,
+    isTopDownloadRefreshing: false,
+    topDownloadHasMore: hasMore,
   });
 };
 

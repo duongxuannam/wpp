@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import {
   View, FlatList, TouchableOpacity, Image, StyleSheet, Text,
   ActivityIndicator,
@@ -15,7 +15,7 @@ import { normalizeHeight, normalize, ratioScreen, windowWidth } from '../../util
 
 const widthItem = (windowWidth - normalize(70)) / 2;
 
-class Search extends Component {
+class Search extends PureComponent {
   static propTypes = {
     navigation: PropTypes.object,
     clearDataSearch: PropTypes.func,
@@ -143,8 +143,9 @@ class Search extends Component {
               source={{ uri: item.thumb_img_url }}
               style={{
                 ...StyleSheet.absoluteFillObject,
-                resizeMode: 'cover', margin: 1, backgroundColor: '#D0CDCE',
+                margin: 1, backgroundColor: '#D0CDCE',
               }}
+              resizeMethod="resize"
             />
           </View>
 
@@ -234,7 +235,7 @@ class Search extends Component {
       return (
         <View style={{
           alignItems: 'center',
-          marginTop: 30,
+          marginTop: 20,
         }}>
           <ActivityIndicator
             size='large'
@@ -261,7 +262,7 @@ class Search extends Component {
               <FlatList
                 data={searchs}
                 numColumns={2}
-                keyExtractor={(item, index) => index}
+                keyExtractor={(item) => item.id.toString()}
                 renderItem={this.renderItem}
                 ListEmptyComponent={this.renderEmpty}
                 style={{ marginHorizontal: normalize(15) }}
@@ -270,6 +271,8 @@ class Search extends Component {
                 onEndReached={this.loadMoreDetails}
                 onEndReachedThreshold={0.2}
                 ListFooterComponent={this.renderFooter}
+
+                removeClippedSubviews={true} scrollEventThrottle={16}
               />}
         </LinearGradient>
       </View>

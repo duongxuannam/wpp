@@ -27,6 +27,10 @@ class Home extends Component {
 
     getTopRequest: PropTypes.func,
     topDownload: PropTypes.array,
+    topDownloadHasMore: PropTypes.bool,
+    topDownloadPage: PropTypes.number,
+    isTopDownloadLoadingMore: PropTypes.bool,
+
     newsHasMore: PropTypes.bool,
     newsPage: PropTypes.number,
     isNewsRefreshing: PropTypes.bool,
@@ -35,6 +39,7 @@ class Home extends Component {
     categoriesPage: PropTypes.number,
     categoriesHasMore: PropTypes.bool,
     categories: PropTypes.array,
+    isCategoriesLoadingMore: PropTypes.bool,
   };
 
   static navigationOptions = ({ navigation }) => {
@@ -106,24 +111,45 @@ class Home extends Component {
       page: 1,
     };
 
+    const paramsTopDownload = {
+      func: 'query',
+      device: 'iphone',
+      page: 1,
+      order: 'download',
+    };
+
 
     getCategoriesRequest(paramsCategories);
 
     getNewsRequest(paramsNews);
 
-    getTopRequest();
+    getTopRequest(paramsTopDownload);
 
   }
 
   loadMoreCategoriesRequest = () => {
-    const { getCategoriesRequest, categoriesHasMore, categoriesPage } = this.props;
-    if (categoriesHasMore) {
+    const { getCategoriesRequest, categoriesHasMore, categoriesPage, isCategoriesLoadingMore } = this.props;
+    if (categoriesHasMore && !isCategoriesLoadingMore) {
       const params = {
         func: 'category',
         device: 'iphone',
         page: categoriesPage + 1,
       };
       getCategoriesRequest(params);
+    }
+  }
+
+
+  loadMoreTopDownloadRequest = () => {
+    const { getTopRequest, topDownloadHasMore, topDownloadPage, isTopDownloadLoadingMore } = this.props;
+    if (topDownloadHasMore && !isTopDownloadLoadingMore) {
+      const params = {
+        func: 'query',
+        device: 'iphone',
+        order: 'download',
+        page: topDownloadPage + 1,
+      };
+      getTopRequest(params);
     }
   }
 
@@ -164,7 +190,10 @@ class Home extends Component {
   }
 
   render() {
-    const { navigation, news, topDownload, categories, isNewsRefreshing } = this.props;
+    const { navigation, news, topDownload, categories,
+      isNewsRefreshing, isTopDownloadLoadingMore,
+      isCategoriesLoadingMore,
+    } = this.props;
     const { category } = this.state;
     return (
       <View flex={1}>
@@ -190,6 +219,7 @@ class Home extends Component {
               showsVerticalScrollIndicator={false}>
               {categories.length > 0 ?
                 <ListTop
+                  isCategoriesLoadingMore={isCategoriesLoadingMore}
                   setCategory={this.setCategory}
                   categories={categories}
                   loadMoreCategoriesRequest={this.loadMoreCategoriesRequest} />
@@ -201,7 +231,11 @@ class Home extends Component {
                 />
                 : this.renderLoading()
               }
-              {topDownload.length > 0 ? <ListBottom navigation={navigation} topDownload={topDownload} />
+              {topDownload.length > 0 ?
+                <ListBottom
+                  isTopDownloadLoadingMore={isTopDownloadLoadingMore}
+                  loadMoreTopDownloadRequest={this.loadMoreTopDownloadRequest}
+                  navigation={navigation} topDownload={topDownload} />
                 : this.renderLoading()
               }
 
@@ -230,13 +264,17 @@ const mapStateToProps = (state) => ({
   categoriesPage: get(state, ['home', 'categoriesPage']),
 
   topDownload: get(state, ['home', 'topDownload'], []),
+  isTopDownloadRefreshing: get(state, ['home', 'isTopDownloadRefreshing']),
+  isTopDownloadLoadingMore: get(state, ['home', 'isTopDownloadLoadingMore']),
+  topDownloadHasMore: get(state, ['home', 'topDownloadHasMore']),
+  topDownloadPage: get(state, ['home', 'topDownloadPage']),
   isTopDownloadLoading: get(state, ['home', 'isTopDownloadLoading']),
 });
 
 const mapDispatchToProps = (dispatch) => ({
   getNewsRequest: (params, success, error) => dispatch(HomeActions.getNewsRequest(params, success, error)),
   getCategoriesRequest: (params, success, error) => dispatch(HomeActions.getCategoriesRequest(params, success, error)),
-  getTopRequest: (success, error) => dispatch(HomeActions.getTopRequest(success, error)),
+  getTopRequest: (params, success, error) => dispatch(HomeActions.getTopRequest(params, success, error)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

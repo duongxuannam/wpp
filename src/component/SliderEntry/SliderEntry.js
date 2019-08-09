@@ -34,6 +34,7 @@ export default class SliderEntry extends Component {
       <Image
         source={{ uri }}
         style={[styles.image, { margin: 1 }]}
+        resizeMethod="resize"
       />
     );
   }

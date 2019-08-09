@@ -280,7 +280,7 @@ class Detail extends Component {
   }
 
   render() {
-    const { details } = this.props;
+    const { details, isDetailsLoadingMore } = this.props;
     return (
       <View flex={1} >
         <LinearGradient
@@ -288,7 +288,7 @@ class Detail extends Component {
           locations={[0, 0.2, 0.3, 0.4]}
           colors={['#DC8DEA', '#C58DE7', '#AB8FE7', '#888DE1']}
           style={{ flex: 1 }}>
-          {details.length > 0 ? <Top data={details}
+          {details.length > 0 ? <Top data={details} isDetailsLoadingMore={isDetailsLoadingMore}
             loadMoreDetails={this.loadMoreDetails}
             ref={(topComponent) => { this.topComponent = topComponent; }}
             scrollToImage={this.scrollToImage} /> :
@@ -306,6 +306,7 @@ class Detail extends Component {
           <Bottom
             downloadFile={this.downloadFile}
             nextImage={this.nextImage} />
+
         </LinearGradient>
       </View>
     );

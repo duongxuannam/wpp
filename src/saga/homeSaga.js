@@ -44,10 +44,11 @@ export function* getCategoriesRequest(actions) {
 }
 
 export function* getTopRequest(actions) {
-  const { actionSuccess, actionFailure } = actions;
+  const { actionSuccess, actionFailure, params } = actions;
   try {
-    const topDownload = yield call(HomeAPI.getTop);
-    yield put(HomeActions.getTopSuccess(topDownload));
+    const topDownload = yield call(HomeAPI.getTop, params);
+    const hasMore = topDownload && topDownload.length !== 0;
+    yield put(HomeActions.getTopSuccess(topDownload, hasMore));
     actionSuccess && actionSuccess(topDownload);
   } catch (error) {
     yield put(AppActions.showError(error.toString()));

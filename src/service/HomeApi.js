@@ -23,7 +23,7 @@ const getNews = async (params) => {
     let responseJson = await response.text();
     return JSON.parse(responseJson.replace(/^\s+|\s+$/g, ''));
   } catch (error) {
-    console.error(error);
+    // console.log(error);
   }
 };
 
@@ -36,20 +36,20 @@ const getCategories = async (params) => {
     let responseJson = await response.text();
     return JSON.parse(responseJson.replace(/^\s+|\s+$/g, ''));
   } catch (error) {
-    console.error(error);
+    // console.log(error);
   }
 };
 
-const getTop = async () => {
+const getTop = async (params) => {
   try {
     // eslint-disable-next-line no-undef
     let response = await fetch(
-      'http://149.28.229.28/api/wallpapers/wall.php?func=query&device=iphone&order=download&page=1}',
+      `http://149.28.229.28/api/wallpapers/wall.php?${queryString.stringify(params)}`,
     );
     let responseJson = await response.text();
     return JSON.parse(responseJson.replace(/^\s+|\s+$/g, ''));
   } catch (error) {
-    console.error(error);
+    // console.log(error);
   }
 };
 

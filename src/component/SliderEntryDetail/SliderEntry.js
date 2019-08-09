@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { View, Image, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
 import { ParallaxImage } from 'react-native-snap-carousel';
@@ -6,7 +6,7 @@ import { get } from 'lodash';
 
 import styles from './styles';
 
-export default class SliderEntry extends Component {
+export default class SliderEntry extends PureComponent {
 
   static propTypes = {
     data: PropTypes.object.isRequired,
@@ -32,7 +32,9 @@ export default class SliderEntry extends Component {
     ) : (
       <Image
         source={{ uri }}
-        style={[styles.image, { margin: 1 }]}
+        style={[{ height: '100%', width: '100%' }, { margin: 1 }]}
+        resizeMethod="resize"
+
       />
     );
   }

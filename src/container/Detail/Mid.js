@@ -51,6 +51,7 @@ class ListBottom extends Component {
             tension: 40,
           }}
           layout={'tinder'}
+        // removeClippedSubviews={true}
         // loop={true}
         />
 

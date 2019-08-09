@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import {
   View,
 } from 'react-native';
@@ -8,8 +8,7 @@ import PropTypes from 'prop-types';
 import SliderEntry from '../../component/SliderEntry';
 import { sliderWidth, itemWidth } from '../../component/SliderEntry/styles';
 
-class ListMid extends Component {
-
+class ListMid extends PureComponent {
   static propTypes = {
     news: PropTypes.array,
     navigation: PropTypes.object,
@@ -49,7 +48,7 @@ class ListMid extends Component {
             tension: 40,
           }}
           layout={'stack'}
-          loop={true}
+        // loop={true}
         />
       </View>
 
