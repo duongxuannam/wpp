@@ -1,0 +1,17 @@
+export default {
+  primary: 'rgb(142,68,173)',
+  tintColor: 'rgb(142,68,173)',
+  borderColor: 'rgb(151,151,151)',
+  txt74: 'rgb(74,74,74)',
+  txt155: 'rgb(155,155,155)',
+  white: '#fff',
+  black: '#000',
+  inactiveTintColor: '#9b9b9b',
+  inactive: '#9b9b9b',
+  transparent: 'transparent',
+  defaultBackground: 'rgb(240, 240, 240)',
+  separator: 'rgba(151, 151, 151, 0.41)',
+  borderTextInput: '#979797',
+  fbColor: '#3b5998',
+  gray: '#f2f2f2',
+};
